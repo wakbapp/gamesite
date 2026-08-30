@@ -7,23 +7,29 @@ window.addEventListener('DOMContentLoaded', () => {
         ctx.beginPath();
 
         if (length >= 40) {
-            ctx.moveTo(position, 400);
-            ctx.lineTo(position, 480);
-            ctx.lineTo(position + length, 480);
-            ctx.lineTo(position + length, 440);
-            ctx.lineTo(position + 40, 440);
+            ctx.moveTo(position, 200);
+            ctx.lineTo(position, 280);
+            ctx.lineTo(position + length - 5, 280);
+            ctx.lineTo(position + length - 5, 240);
+            ctx.lineTo(position + 40, 240);
         }
 
         if (length < 40) {
-            ctx.moveTo(position, 400);
-            ctx.lineTo(position, 480);
-            ctx.lineTo(position + length, 480);
-            ctx.lineTo(position + length, 400 + length);
+            ctx.moveTo(position, 200);
+            ctx.lineTo(position, 280);
+            ctx.lineTo(position + length, 280);
+            ctx.lineTo(position + length, 200 + length);
         }
 
         ctx.closePath();
         ctx.fill();
     }
 
-    drawbar(100, 60)
+    drawbar(0, 160);
+    drawbar(160, 160);
+    drawbar(320, 160);
+    drawbar(480, 160);
+    drawbar(640, 160);
+    drawbar(800, 160);
+
 });
