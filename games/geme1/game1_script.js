@@ -3,7 +3,7 @@ window.addEventListener('DOMContentLoaded', () => {
     const ctx = canvas.getContext('2d');
 
     function drawbar(position, beat) {
-        length = beat * 48
+        const length = beat * 48
         ctx.fillStyle = "#00ffcc";
         ctx.beginPath();
 
@@ -26,10 +26,44 @@ window.addEventListener('DOMContentLoaded', () => {
         ctx.fill();
     }
 
-    drawbar(0, 1);
-    drawbar(48, 1);
-    drawbar(96, 1);
-    drawbar(576, 4);
-    drawbar(768, 4);
+    const part = [
+        [1],
+        [0.5, 0.5],
+        [0.5, 0.25, 0.25],
+        [0.25, 0.5, 0.25],
+        [0.25, 0.25, 0.5],
+        [0.75, 0.25],
+        [0.25, 0.75],
+        [0.25, 0.25, 0.25, 0.25],
+        [1 / 3, 1 / 3, 1 / 3]
+    ];
+
+    const music = [];
+
+    for (let parts = 0; parts < 16; parts++) {
+        const addpart = part[Math.floor(Math.random() * part.length)];
+        for (let i = 0; i < addpart.length; i++) {
+            music.push(addpart[i]);
+        }
+    }
+
+    let count = 0;
+
+    drawbar(0, music[0][1]);
+
+    for (let note = 1; note < music.length; note++) {
+        count += music[note - 1][1]
+        music[note][0] = count
+        drawbar(count * 48, music[note][1]);
+    }
+
+    ctx.strokeStyle = '#ffffff';
+    ctx.lineWidth = 3;
+
+    ctx.beginPath();
+    ctx.moveTo(48, 0);
+    ctx.lineTo(48, 360);
+    ctx.stroke();
+
 
 });
