@@ -2,6 +2,20 @@ window.addEventListener('DOMContentLoaded', () => {
     const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d');
 
+    const part = [
+        [1],
+        [0.5, 0.5],
+        [0.5, 0.25, 0.25],
+        [0.25, 0.5, 0.25],
+        [0.25, 0.25, 0.5],
+        [0.75, 0.25],
+        [0.25, 0.75],
+        [0.25, 0.25, 0.25, 0.25],
+        [1 / 3, 1 / 3, 1 / 3]
+    ];
+
+    const music = [];
+
     function drawbar(position, beat) {
         const length = beat * 48
         ctx.fillStyle = "#00ffcc";
@@ -26,26 +40,19 @@ window.addEventListener('DOMContentLoaded', () => {
         ctx.fill();
     }
 
-    const part = [
-        [1],
-        [0.5, 0.5],
-        [0.5, 0.25, 0.25],
-        [0.25, 0.5, 0.25],
-        [0.25, 0.25, 0.5],
-        [0.75, 0.25],
-        [0.25, 0.75],
-        [0.25, 0.25, 0.25, 0.25],
-        [1 / 3, 1 / 3, 1 / 3]
-    ];
-
-    const music = [];
-
-    for (let parts = 0; parts < 16; parts++) {
-        const addpart = part[Math.floor(Math.random() * part.length)];
-        for (let i = 0; i < addpart.length; i++) {
-            music.push(addpart[i]);
+    function compose() {
+        for (let parts = 0; parts < 16; parts++) {
+            const addpart = part[Math.floor(Math.random() * part.length)];
+            for (let i = 0; i < addpart.length; i++) {
+                music.push(addpart[i]);
+            }
         }
+        console.log(music);
     }
+
+    compose();
+
+
 
     let count = 0;
 
