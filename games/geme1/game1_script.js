@@ -2,7 +2,7 @@ window.addEventListener('DOMContentLoaded', () => {
     const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d');
 
-    canvas.addEventListener('click', (event) => {
+    canvas.addEventListener('pointerdown', (event) => {
         const rect = canvas.getBoundingClientRect();
         const clickX = event.clientX - rect.left;
         const clickY = event.clientY - rect.top;
