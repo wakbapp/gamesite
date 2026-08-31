@@ -52,8 +52,6 @@ window.addEventListener('DOMContentLoaded', () => {
 
     compose();
 
-
-
     let count = 0;
 
     drawbar(0, music[0][1]);
