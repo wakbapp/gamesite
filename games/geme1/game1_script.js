@@ -7,8 +7,14 @@ window.addEventListener('DOMContentLoaded', () => {
         const clickX = event.clientX - rect.left;
         const clickY = event.clientY - rect.top;
 
-        if (clickX >= 100 && clickX <= 200 && clickY >= 100 && clickY <= 200) {
-            speed *= 2;
+        if (clickX >= 320 && clickX <= 640 && clickY >= 304 && clickY <= 344) {
+            if (music.some(num => num >= nowbeat - 0.1 && num <= nowbeat + 0.1)) {
+                score += 1;
+            } else if (nowbeat >= -0.1 && nowbeat <= 0.1) {
+                score += 1;
+            } else if (nowbeat >= -0.1) {
+                isgameover = true;
+            }
         }
     });
 
@@ -28,6 +34,10 @@ window.addEventListener('DOMContentLoaded', () => {
 
     let speed = 0.015;
     let nowbeat = -3;
+    let score = 0;
+    let miss = 0;
+    let isgameclear = false;
+    let isgameover = false;
 
     function drawbar(position, beat) {
         const length = beat * 192
@@ -75,18 +85,31 @@ window.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function drawtext() {
-        ctx.font = "20px 'Arial";
+    function drawtext(text, x, y) {
+        ctx.font = "20px 'Arial'";
         ctx.fillStyle = "#ffffff";
-        ctx.fillText(`Score: ${speed}`, 50, 50);
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText(text, x, y);
     }
 
-    function drawbutton() {
+    function drawbutton(text, x, y, width, height) {
+        ctx.fillStyle = "#ff6666";
+        ctx.fillRect(x, y, width, height);
+        drawtext(text, x + width / 2, y + height / 2);
+    }
 
+    function sleep(time) {
+        return new Promise((resolve) => setTimeout(resolve, time));
     }
 
     function drawall() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
+        drawbar(-nowbeat * 192 + 480, music[0]);
+        for (let note = 1; note < music.length; note++) {
+            drawbar((music[note - 1] - nowbeat) * 192 + 480, music[note] - music[note - 1]);
+        }
+
         let left = 0;
         if (nowbeat <= 2.5) {
             left = 480 - nowbeat * 192;
@@ -97,11 +120,14 @@ window.addEventListener('DOMContentLoaded', () => {
         for (let i = 0; i < 5; i++) {
             drawline(left + 192 * i, 2.);
         }
-        drawbar(- nowbeat * 192 + 480, music[0]);
-        for (let note = 1; note < music.length; note++) {
-            drawbar((music[note - 1] - nowbeat) * 192 + 480, music[note] - music[note - 1]);
-        }
         drawline(480, 4);
+
+        if (speed == 0) {
+        }
+        if (nowbeat > 100) {
+            drawtext("クリア！", 480, 180);
+        }
+        drawbutton("ボタン", 320, 304, 320, 40);
     }
 
     function main() {
@@ -117,17 +143,18 @@ window.addEventListener('DOMContentLoaded', () => {
         if (nowbeat > 80) {
             speed = 0.03;
         }
-        if (nowbeat > 100) {
-            speed = 0.032;
-        }
         console.log(nowbeat);
         nowbeat += speed;
         drawall();
-        drawtext();
+        drawtext(`Score: ${score}`, 48, 36);
+        if (isgameover = true) {
+            drawtext("ゲームオーバー", 480, 180);
+            sleep(3);
+        }
         requestAnimationFrame(main);
     }
 
-    compose(200);
+    compose(100);
     requestAnimationFrame(main);
 
 });
