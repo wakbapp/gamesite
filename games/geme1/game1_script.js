@@ -3,17 +3,15 @@ window.addEventListener('DOMContentLoaded', () => {
     const ctx = canvas.getContext('2d');
 
     canvas.addEventListener('pointerdown', (event) => {
-        const rect = canvas.getBoundingClientRect();
-        const clickX = event.clientX - rect.left;
-        const clickY = event.clientY - rect.top;
-
-        if (clickX >= 320 && clickX <= 640 && clickY >= 304 && clickY <= 344) {
-            if (music.some(num => num >= nowbeat - 0.1 && num <= nowbeat + 0.1)) {
+        getclick(event, canvas);
+        if (clickx >= 320 && clickx <= 640 && clicky >= 304 && clicky <= 344) {
+            if (result.some(beat => (beat >= nowbeat - 0.1) && (beat <= nowbeat + 0.1))) {
                 score += 1;
-            } else if (nowbeat >= -0.1 && nowbeat <= 0.1) {
-                score += 1;
-            } else if (nowbeat >= -0.1) {
-                isgameover = true;
+            } else {
+                miss += 1
+                if (miss >= 3) {
+                    isgameover = false;
+                }
             }
         }
     });
@@ -33,11 +31,22 @@ window.addEventListener('DOMContentLoaded', () => {
     const music = [];
 
     let speed = 0.015;
+    let clickx = 0;
+    let clicky = 0;
     let nowbeat = -3;
     let score = 0;
     let miss = 0;
     let isgameclear = false;
     let isgameover = false;
+
+    function getclick(event, canvas) {
+        const rect = canvas.getBoundingClientRect();
+        const scaleX = canvas.width / rect.width;
+        const scaleY = canvas.height / rect.height;
+
+        clickx = (event.clientX - rect.left) * scaleX;
+        clicky = (event.clientY - rect.top) * scaleY;
+    }
 
     function drawbar(position, beat) {
         const length = beat * 192
@@ -122,8 +131,7 @@ window.addEventListener('DOMContentLoaded', () => {
         }
         drawline(480, 4);
 
-        if (speed == 0) {
-        }
+        if (speed == 0) { }
         if (nowbeat > 100) {
             drawtext("クリア！", 480, 180);
         }
@@ -147,14 +155,26 @@ window.addEventListener('DOMContentLoaded', () => {
         nowbeat += speed;
         drawall();
         drawtext(`Score: ${score}`, 48, 36);
-        if (isgameover = true) {
-            drawtext("ゲームオーバー", 480, 180);
+        drawtext(`Miss: ${miss}`, 48, 72);
+        if (isgameclear) {
+            drawtext("ゲームクリア", 480, 180);
+            speed = 0;
             sleep(3);
+            start(120);
+        }
+        if (isgameover) {
+            drawtext("ゲームオーバー", 480, 180);
+            speed = 0;
+            sleep(3);
+            start(100);
         }
         requestAnimationFrame(main);
     }
 
-    compose(100);
-    requestAnimationFrame(main);
+    function start(beats) {
+        compose(beats);
+        requestAnimationFrame(main);
+    }
 
+    start(100);
 });
