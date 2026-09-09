@@ -5,3 +5,23 @@ body {
 .title {
     font-size: 36px;
 }
+
+.area {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+.game {
+    width: 150px;
+    border: outset #000000;
+}
+
+.link {
+    font-size: 30px;
+    text-decoration: none;
+}
+
+.name {
+    font-size: 15px;
+}
