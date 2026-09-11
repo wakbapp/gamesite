@@ -6,6 +6,13 @@ body {
     font-size: 36px;
 }
 
+.heading {
+    font-size: 24px;
+    padding: 0.5em;
+    background: #eaf3ff;
+    border-bottom: solid 3px #516ab6;
+}
+
 .area {
     display: flex;
     flex-wrap: wrap;
