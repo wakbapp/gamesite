@@ -1,180 +1,213 @@
 window.addEventListener('DOMContentLoaded', () => {
-    const canvas = document.getElementById('gameCanvas');
-    const ctx = canvas.getContext('2d');
+            const canvas = document.getElementById('gameCanvas');
+            const ctx = canvas.getContext('2d');
 
-    canvas.addEventListener('pointerdown', (event) => {
-        getclick(event, canvas);
-        if (clickx >= 320 && clickx <= 640 && clicky >= 304 && clicky <= 344) {
-            if (result.some(beat => (beat >= nowbeat - 0.1) && (beat <= nowbeat + 0.1))) {
-                score += 1;
-            } else {
-                miss += 1
-                if (miss >= 3) {
-                    isgameover = false;
+            canvas.addEventListener('pointerdown', (event) => {
+                getclick(event, canvas);
+                if (clickx >= 320 && clickx <= 640 && clicky >= 304 && clicky <= 344) {
+                    if (music.some(beat => (beat >= nowbeat - 0.1) && (beat <= nowbeat + 0.1))) {
+                        score += 1;
+                    } else {
+                        miss += 1
+                        if (miss >= 3) {
+                            isgameover = true;
+                        }
+                    }
+                }
+            });
+
+            window.addEventListener('keydown',(event)=>{
+                if (event.code==='Space'){
+                    if (music.some(beat => (beat >= nowbeat - 0.1) && (beat <= nowbeat + 0.1))) {
+                        score += 1;
+                    } else {
+                        miss += 1
+                        if (miss >= 3) {
+                            isgameover = true;
+                        }
+                    }
+                }
+            })
+
+
+            let speed = 0.015;
+            let clickx = 0;
+            let clicky = 0;
+            let nowbeat = -3;
+            let score = 0;
+            let miss = 0;
+            let isgameover = false;
+            const part = [
+                [1],
+                [0.5, 0.5],
+                [0.5, 0.25, 0.25],
+                [0.25, 0.5, 0.25],
+                [0.25, 0.25, 0.5],
+                [0.75, 0.25],
+                [0.25, 0.75],
+                [0.25, 0.25, 0.25, 0.25],
+                [1 / 3, 1 / 3, 1 / 3]
+            ];
+
+            const music = [];
+
+            function getclick(event, canvas) {
+                const rect = canvas.getBoundingClientRect();
+                const scaleX = canvas.width / rect.width;
+                const scaleY = canvas.height / rect.height;
+
+                clickx = (event.clientX - rect.left) * scaleX;
+                clicky = (event.clientY - rect.top) * scaleY;
+            }
+
+            function drawbar(position, beat) {
+                const length = beat * 192
+                ctx.fillStyle = "#00ffcc";
+                ctx.beginPath();
+
+                if (length > 48) {
+                    ctx.moveTo(position, 200);
+                    ctx.lineTo(position, 288);
+                    ctx.lineTo(position + length - 8, 288);
+                    ctx.lineTo(position + length - 8, 244);
+                    ctx.lineTo(position + 44, 244);
+                }
+
+                if (length <= 48) {
+                    ctx.moveTo(position, 200);
+                    ctx.lineTo(position, 288);
+                    ctx.lineTo(position + length - 8, 288);
+                    ctx.lineTo(position + length - 8, 192 + length);
+                }
+
+                ctx.closePath();
+                ctx.fill();
+            }
+
+            function drawline(position, width) {
+                ctx.strokeStyle = '#ffffff';
+                ctx.lineWidth = width;
+                ctx.beginPath();
+                ctx.moveTo(position, 0);
+                ctx.lineTo(position, 360);
+                ctx.stroke();
+            }
+
+            function compose(beats) {
+                for (let parts = 0; parts < beats; parts++) {
+                    const addpart = part[Math.floor(Math.random() * part.length)];
+                    for (let i = 0; i < addpart.length; i++) {
+                        music.push(addpart[i]);
+                    }
+                }
+
+                for (let note = 1; note < music.length; note++) {
+                    music[note] += music[note - 1]
                 }
             }
-        }
-    });
 
-    const part = [
-        [1],
-        [0.5, 0.5],
-        [0.5, 0.25, 0.25],
-        [0.25, 0.5, 0.25],
-        [0.25, 0.25, 0.5],
-        [0.75, 0.25],
-        [0.25, 0.75],
-        [0.25, 0.25, 0.25, 0.25],
-        [1 / 3, 1 / 3, 1 / 3]
-    ];
-
-    const music = [];
-
-    let speed = 0.015;
-    let clickx = 0;
-    let clicky = 0;
-    let nowbeat = -3;
-    let score = 0;
-    let miss = 0;
-    let isgameclear = false;
-    let isgameover = false;
-
-    function getclick(event, canvas) {
-        const rect = canvas.getBoundingClientRect();
-        const scaleX = canvas.width / rect.width;
-        const scaleY = canvas.height / rect.height;
-
-        clickx = (event.clientX - rect.left) * scaleX;
-        clicky = (event.clientY - rect.top) * scaleY;
-    }
-
-    function drawbar(position, beat) {
-        const length = beat * 192
-        ctx.fillStyle = "#00ffcc";
-        ctx.beginPath();
-
-        if (length > 48) {
-            ctx.moveTo(position, 200);
-            ctx.lineTo(position, 288);
-            ctx.lineTo(position + length - 8, 288);
-            ctx.lineTo(position + length - 8, 244);
-            ctx.lineTo(position + 44, 244);
-        }
-
-        if (length <= 48) {
-            ctx.moveTo(position, 200);
-            ctx.lineTo(position, 288);
-            ctx.lineTo(position + length - 8, 288);
-            ctx.lineTo(position + length - 8, 192 + length);
-        }
-
-        ctx.closePath();
-        ctx.fill();
-    }
-
-    function drawline(position, width) {
-        ctx.strokeStyle = '#ffffff';
-        ctx.lineWidth = width;
-        ctx.beginPath();
-        ctx.moveTo(position, 0);
-        ctx.lineTo(position, 360);
-        ctx.stroke();
-    }
-
-    function compose(beats) {
-        for (let parts = 0; parts < beats; parts++) {
-            const addpart = part[Math.floor(Math.random() * part.length)];
-            for (let i = 0; i < addpart.length; i++) {
-                music.push(addpart[i]);
+            function drawtext(text, x, y) {
+                ctx.font = "20px 'Arial'";
+                ctx.fillStyle = "#ffffff";
+                ctx.textAlign = "center";
+                ctx.textBaseline = "middle";
+                ctx.fillText(text, x, y);
             }
-        }
 
-        for (let note = 1; note < music.length; note++) {
-            music[note] += music[note - 1]
-        }
-    }
+            function drawbutton(text, x, y, width, height) {
+                ctx.fillStyle = "#ff6666";
+                ctx.fillRect(x, y, width, height);
+                drawtext(text, x + width / 2, y + height / 2);
+            }
 
-    function drawtext(text, x, y) {
-        ctx.font = "20px 'Arial'";
-        ctx.fillStyle = "#ffffff";
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-        ctx.fillText(text, x, y);
-    }
+            function sleep(time) {
+                return new Promise((resolve) => setTimeout(resolve, time));
+            }
 
-    function drawbutton(text, x, y, width, height) {
-        ctx.fillStyle = "#ff6666";
-        ctx.fillRect(x, y, width, height);
-        drawtext(text, x + width / 2, y + height / 2);
-    }
+            function drawall() {
+                //全消去
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                //バー描画
+                drawbar(-nowbeat * 192 + 480, music[0]);
+                for (let note = 1; note < music.length; note++) {
+                    drawbar((music[note - 1] - nowbeat) * 192 + 480, music[note] - music[note - 1]);
+                }
 
-    function sleep(time) {
-        return new Promise((resolve) => setTimeout(resolve, time));
-    }
+                //区切り線描画
+                let left = 0;
+                if (nowbeat <= 2.5) {
+                    left = 480 - nowbeat * 192;
+                }else{
+                    left = 192 - Math.abs(480 - nowbeat * 192) % 192;
+                }
+                for (let i = 0; i < 5; i++) {
+                    drawline(left + 192 * i, 2);
+                }
+                //中央線描画
+                drawline(480, 4);
 
-    function drawall() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        drawbar(-nowbeat * 192 + 480, music[0]);
-        for (let note = 1; note < music.length; note++) {
-            drawbar((music[note - 1] - nowbeat) * 192 + 480, music[note] - music[note - 1]);
-        }
+                //テキスト描画
+                drawtext(`Score: ${score}`, 48, 36);
+                drawtext(`Miss: ${miss}`, 48, 72);
 
-        let left = 0;
-        if (nowbeat <= 2.5) {
-            left = 480 - nowbeat * 192;
-        }
-        if (nowbeat >= 2.5) {
-            left = 192 - Math.abs(480 - nowbeat * 192) % 192;
-        }
-        for (let i = 0; i < 5; i++) {
-            drawline(left + 192 * i, 2.);
-        }
-        drawline(480, 4);
+                if (speed == 0) {}
+                if (nowbeat > 100) {
+                    drawtext("クリア！", 480, 180);
+                }
+                //ボタン描画
+                drawbutton("ボタン", 320, 304, 320, 40);
+            }
 
-        if (speed == 0) { }
-        if (nowbeat > 100) {
-            drawtext("クリア！", 480, 180);
-        }
-        drawbutton("ボタン", 320, 304, 320, 40);
-    }
+            async function main() {
+                if (nowbeat > 20) {
+                    speed = 0.02;
+                } else if (nowbeat > 40) {
+                    speed = 0.025;
+                } else if (nowbeat > 60) {
+                    speed = 0.028;
+                } else if (nowbeat > 80) {
+                    speed = 0.03;
+                } else if (nowbeat > 100) {
+                    speed = 0;
+                }
 
-    function main() {
-        if (nowbeat > 20) {
-            speed = 0.02;
-        }
-        if (nowbeat > 40) {
-            speed = 0.025;
-        }
-        if (nowbeat > 60) {
-            speed = 0.028;
-        }
-        if (nowbeat > 80) {
-            speed = 0.03;
-        }
-        console.log(nowbeat);
-        nowbeat += speed;
-        drawall();
-        drawtext(`Score: ${score}`, 48, 36);
-        drawtext(`Miss: ${miss}`, 48, 72);
-        if (isgameclear) {
-            drawtext("ゲームクリア", 480, 180);
-            speed = 0;
-            sleep(3);
-            start(120);
-        }
-        if (isgameover) {
-            drawtext("ゲームオーバー", 480, 180);
-            speed = 0;
-            sleep(3);
+                nowbeat += speed;
+                drawall();
+                
+                if (nowbeat > 100) {
+                    drawtext("ゲームクリア", 480, 180);
+                    speed = 0;
+                    await sleep(3000);
+                    reset();
+                    start(120);
+                    return;
+                }
+                if (isgameover) {
+                    drawtext("ゲームオーバー", 480, 180);
+                    speed = 0;
+                    await sleep(3000);
+                    reset();
+                    start(100);
+                    return;
+                }
+                requestAnimationFrame(main);
+            }
+
+            function reset(){
+                speed=0.015;
+                clickx=0;
+                clicky=0;
+                nowbeat=-1;
+                score=0;
+                miss=0;
+                isgameover=0;
+                music.length=0;
+            }
+
+            function start(beats) {
+                compose(beats);
+                requestAnimationFrame(main);
+            }
+
             start(100);
-        }
-        requestAnimationFrame(main);
-    }
-
-    function start(beats) {
-        compose(beats);
-        requestAnimationFrame(main);
-    }
-
-    start(100);
-});
+        });
